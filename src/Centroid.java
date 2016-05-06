@@ -2,6 +2,9 @@ import java.util.ArrayList;
 
 
 public class Centroid extends DataPoint {
+	public static final int FURTHEST_FIRST_CENTROID_INIT = 1;
+	public static final int RANDOM_CENTROID_INIT = 0;
+	
 	private ArrayList<DataPoint> members;
 	
 	public Centroid() {
@@ -44,6 +47,17 @@ public class Centroid extends DataPoint {
 		for(DataPoint m : members) {
 			System.out.println(m.getFeatures());
 		}
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		int i = 0;
+		for(Object o : getFeatures()) {
+			if (i++ != 0) sb.append(", ");
+			sb.append(o.toString());
+		}
+		return sb.toString();
 	}
 	
 	
