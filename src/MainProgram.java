@@ -2,19 +2,30 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 
+/**
+ * NOTE MAY 3, 2016:
+ * For categorical data, there's no right or wrong.
+ * So for the assignment purpose, just use 0 if there's no difference and 1 if there's a difference
+ * between the compared categorical data.
+ * [NOT IMPLEMENTED]
+ * 
+ * @author yusufgandhi
+ *
+ */
+
 public class MainProgram {
 	public static void main(String[] args) {
 
-		CSVContainer csv = new CSVContainer("test.csv");
+		CSV csv = new CSV("test.csv");
 		
-		KMeans km = new KMeans(2 /* number of centroids */, csv);
+		KMeans km = new KMeans(csv, 2 /* number of centroids */, 0, 1, 0);
 		System.out.println("Chosen centroids:");
 		System.out.println(km.getCentroid(0).getFeatures());
 		System.out.println(km.getCentroid(1).getFeatures());
 		
 		System.out.println();
 		
-		for(CSVContainer.Observation o : csv.getRows()) {
+		for(DataPoint o : csv.getRows()) {
 			
 			for(int i = 0; i < o.featureSize(); i++)
 				System.out.print(o.getFeatureValue(i) + "(" + o.getFeatureValue(i).getClass().toString() + ") " );
@@ -27,7 +38,7 @@ public class MainProgram {
 		System.out.println("Manh  : " + Distance.ManhattanDist(csv.getRow(2), csv.getRow(3)));
 
 		
-		KMeans.Centroid [] initCentroids = new KMeans.Centroid[km.getK()];
+		Centroid [] initCentroids = new Centroid[km.getK()];
 		boolean centroidsMoved = true;
 		double centroidsMovement = 0.0;
 		int idx;
@@ -36,22 +47,20 @@ public class MainProgram {
 		do {
 			System.out.println("Iteration " + iteration++ + ":");
 			
-			// copying the current centroids
 			// initCentroids can be instance of Observation
+			// copying the current centroids
 			// as we need initCentroids to later compare the movement
-			// of any centroid
+			// of all centroids
 			for (int i = 0; i < km.getK(); i++) {
-				initCentroids[i] = new KMeans.Centroid(km.getCentroid(i));
+				initCentroids[i] = new Centroid(km.getCentroid(i));
 			}
 			
-			// assigning all the observation to the closest centroid
-			for (CSVContainer.Observation obs : km.getObservations()) {
+			// assigning all observations to the closest centroid
+			for (DataPoint obs : km.getObservations()) {
 				
 				
-				idx = 0;
-				for(KMeans.Centroid cent : km.getCentroids() ) {
+				for(Centroid cent : km.getCentroids() ) {
 					allDistance.add(Distance.EuclideanDist(obs, cent));
-					idx++;
 				}
 				
 				int centIndexObsAssignedTo = allDistance.indexOf(Collections.min(allDistance));
@@ -62,7 +71,7 @@ public class MainProgram {
 			
 			idx = 0;
 			centroidsMovement = 0.0;
-			for(KMeans.Centroid c : km.getCentroids()) {
+			for(Centroid c : km.getCentroids()) {
 				System.out.println("Centroid #" + idx + " members: " + c.getAllMembers().size());
 				c.printAllMembers();
 				c.calculateNewPosition();

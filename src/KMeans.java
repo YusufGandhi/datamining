@@ -3,33 +3,54 @@ import java.util.ArrayList;
 
 public class KMeans {
 	private ArrayList<Centroid> centroids;
-	private CSVContainer csv;
+	private CSV csv;
 	private int K;
+	private int distanceFunction;
+	private int maxIteration;
+	private int centroidInitFunction;
 	
-	public KMeans(int K, CSVContainer csv) {
-		this.K = K;
+	public KMeans(CSV csv, int K, int distanceFunction, int maxIteration, int centroidInitFunction) {
 		this.csv = csv;
+		this.K = K;
+		this.distanceFunction = distanceFunction;
+		this.maxIteration = maxIteration;
+		this.centroidInitFunction = centroidInitFunction;
 		centroids = new ArrayList<Centroid>();
 		randomCentroidsInit();
 	}
 	
 	public void randomCentroidsInit() {
-		// TODO random initialization
-		int len = csv.getRows().size();
-		System.out.println("Randomize: " + len);
+//		int len = csv.getRows().size();
+//		System.out.println("Randomize: " + len);
+//		
 		// setting random centroids from the observations
 		for(int i = 0; i < K; i++) {
-			int idx = (int) (Math.random() * len);
-			Centroid chosen = new Centroid(csv.getRows().get(idx));
-			centroids.add(i, chosen);
+//			int idx = (int) (Math.random() * len);
+			Centroid chosen = initRandomCentroid();
+			
+			/*
+			 * check whether the chosen centroid is already in the list
+			 * if not, insert it in the centroid collection; repeat otherwise 
+			 */
+			if(!centroids.contains(chosen))
+				centroids.add(i, chosen);
+			else 
+				i--;
 		}
 	}
 	
-	public void farthestFirstCentroidsInit() {
-		// TODO: farthest-first initialization
+	public Centroid initRandomCentroid() {
+		int size = csv.getRows().size();
+		int idx = (int) (Math.random() * size);
+		return new Centroid(csv.getRow(idx));
 	}
 	
-	public ArrayList<CSVContainer.Observation> getObservations() {
+	public void farthestFirstCentroidsInit() {
+//		 TODO: farthest-first initialization
+		
+	}
+	
+	public ArrayList<DataPoint> getObservations() {
 		return csv.getRows();
 	}
 	
@@ -44,54 +65,6 @@ public class KMeans {
 	
 	public int getK() {
 		return K;
-	}
-	
-	public static class Centroid extends CSVContainer.Observation {
-		private ArrayList<CSVContainer.Observation> members;
-		
-		public Centroid() {
-			super();
-			members = new ArrayList<CSVContainer.Observation>();
-		}
-		
-		public Centroid(CSVContainer.Observation copy) {
-			super(copy);
-			members = new ArrayList<CSVContainer.Observation>();
-		}
-		
-		public void addMember(CSVContainer.Observation m) {
-			members.add(m);
-		}
-		
-		public ArrayList<CSVContainer.Observation> getAllMembers() {
-			return members;
-		}
-		
-		public void deleteAllMembers() {
-			members.clear();
-		}
-		
-		public void calculateNewPosition() {
-			for(int i = 0; i < featureSize(); i++) {
-				
-				if (getFeatureValue(i) instanceof String) continue;
-				
-				double sum = 0;
-				for(CSVContainer.Observation m : members) {
-					sum += (Double) m.getFeatureValue(i);
-				}
-				
-				setFeatureValue(i, sum / members.size());
-			}
-		}
-		
-		public void printAllMembers() {
-			for(CSVContainer.Observation m : members) {
-				System.out.println(m.getFeatures());
-			}
-		}
-		
-		
 	}
 	
 	

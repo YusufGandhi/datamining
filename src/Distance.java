@@ -1,6 +1,11 @@
 
 public class Distance {
-	public final static double ManhattanDist(CSVContainer.Observation obs1, CSVContainer.Observation obs2) {
+	public static final int EUCLIDEAN = 0;
+	public static final int MANHATTAN = 1;
+	public static final int COSINE = 2;
+	
+	
+	public final static double ManhattanDist(DataPoint obs1, DataPoint obs2) {
 		if(!IsCompatible(obs1,obs2)) throw new UnsupportedOperationException("Observations don't match");
 		double distance = 0.0;
 		for (Integer i : obs1.getNumIndex()) {
@@ -9,7 +14,7 @@ public class Distance {
 		return distance;
 	}
 	
-	public final static double EuclideanDist(CSVContainer.Observation obs1, CSVContainer.Observation obs2) {
+	public final static double EuclideanDist(DataPoint obs1, DataPoint obs2) {
 		if(!IsCompatible(obs1,obs2)) throw new UnsupportedOperationException("Observations don't match");
 		double distance = 0.0;
 		for (Integer i : obs1.getNumIndex()) {
@@ -19,11 +24,11 @@ public class Distance {
 		return Math.sqrt(distance);
 	}
 	
-	public final static double CosineDist(CSVContainer.Observation obs1, CSVContainer.Observation obs2) {
+	public final static double CosineDist(DataPoint obs1, DataPoint obs2) {
 		return 0.0;
 	}
 	
-	private static boolean IsCompatible(CSVContainer.Observation o1, CSVContainer.Observation o2) {
+	private static boolean IsCompatible(DataPoint o1, DataPoint o2) {
 		if(o1.featureSize() != o2.featureSize()) return false;
 
 		for(int i = 0; i < o1.featureSize(); i++) {
