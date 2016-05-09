@@ -29,21 +29,6 @@ public class MainProgram {
 		for(Centroid c : km.getCentroids()) {
 			System.out.println(c.getFeatures() + " (Members: " + c.getAllMembers().size() + ")");
 		}
-//		
-//		System.out.println();
-//		
-//		for(DataPoint o : csv.getRows()) {
-//			
-//			for(int i = 0; i < o.featureSize(); i++)
-//				System.out.print(o.getFeatureValue(i) + "(" + o.getFeatureValue(i).getClass().toString() + ") " );
-//			System.out.println();
-//		}
-//		
-//		System.out.println();
-//		System.out.println("\nDistance between 2 and 3:");
-//		System.out.println("Euclid: " + Distance.EuclideanDist(csv.getRow(2), csv.getRow(3)));
-//		System.out.println("Manh  : " + Distance.ManhattanDist(csv.getRow(2), csv.getRow(3)));
-
 		
 		km.runClustering();
 		
