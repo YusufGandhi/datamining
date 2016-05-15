@@ -10,22 +10,24 @@ public class KMeans {
 	private CSV csv;
 	
 	// the K parameter (how many centroids)
-	private int K;
+	protected int K;
 	
 	// parameter to determine which distance
 	// function to use 
-	private int distanceFunction;
+	protected Distance.Func distanceFunction;
 	
 	// parameter control the maximum iteration
 	private int maxIteration;
 	
 	// parameter to decide what centroid-initialization
 	// function to use
-	private int centroidInitFunction;
+	protected Centroid.Init centroidInitFunction;
 	
 	// parameter to count how many iterations
 	// used in the clustering process
 	private int iteration;
+	
+//	private ArrayList<Integer> initialCentroidIdx;
 	
 	/**
 	 * The main constructor of KMeans object. It accepts CSV object, the K,
@@ -37,22 +39,23 @@ public class KMeans {
 	 * @param maxIteration
 	 * @param centroidInitFunction
 	 */
-	public KMeans(CSV csv, int K, int distanceFunction, int maxIteration, int centroidInitFunction) {
+	public KMeans(CSV csv, int K, Distance.Func distanceFunction, int maxIteration, Centroid.Init centroidInitFunction) {
 		// setting up the KMeans object's properties
 		this.csv = csv;
 		this.K = K;
 		this.distanceFunction = distanceFunction;
 		this.maxIteration = maxIteration;
+
 		
 		// choosing the centroid initialization function:
 		// either fur
-		this.centroidInitFunction = (centroidInitFunction == Centroid.FURTHEST_FIRST_CENTROID_INIT ?
-				Centroid.FURTHEST_FIRST_CENTROID_INIT : Centroid.RANDOM_CENTROID_INIT);
+		this.centroidInitFunction = (centroidInitFunction == Centroid.Init.FURTHEST_FIRST ?
+				Centroid.Init.FURTHEST_FIRST : Centroid.Init.RANDOM);
 		centroids = new ArrayList<Centroid>();
 		
 		// initalizing centroids initialization function
 		// either furthest-first or random 
-		if (this.centroidInitFunction == Centroid.FURTHEST_FIRST_CENTROID_INIT)
+		if (this.centroidInitFunction == Centroid.Init.FURTHEST_FIRST)
 			furthestFirstCentroidsInit();
 		else
 			randomCentroidsInit();
@@ -65,7 +68,7 @@ public class KMeans {
 	 * Method to generate one random centroids.
 	 * @return random centroid from one of the available data points
 	 */
-	private Centroid initRandomCentroid() {
+	private Centroid getRandomCentroidFromDataPoints() {
 		int size = csv.getRows().size();
 		int idx = (int) (Math.random() * size);
 		return new Centroid(csv.getRow(idx));
@@ -76,7 +79,7 @@ public class KMeans {
 	 */
 	public void randomCentroidsInit() {		
 		for(int i = 0; i < K; i++) {
-			Centroid chosen = initRandomCentroid();
+			Centroid chosen = getRandomCentroidFromDataPoints();
 			
 			if(!centroids.contains(chosen))
 				centroids.add(i, chosen);
@@ -90,7 +93,7 @@ public class KMeans {
 	 */
 	public void furthestFirstCentroidsInit() {
 		// STEP 1: adding the first, random centroid
-		centroids.add(initRandomCentroid());
+		centroids.add(getRandomCentroidFromDataPoints());
 		
 		// STEP 2: repeat k - 1 times: find the data point that
 		//         is the farthest away from the selected centroids so far
@@ -106,7 +109,7 @@ public class KMeans {
 			for(DataPoint d : csv.getRows()) {
 				double sum = 0.0;
 				for(Centroid c : centroids) {
-					sum += calcDistance(c, d);
+					sum += distanceFunction.getDistance(c, d);//calcDistance(c, d);
 				}
 				
 				if (sum > max) {
@@ -130,14 +133,14 @@ public class KMeans {
 	 * @param d2 the second data point to compare
 	 * @return   the distance between the two data points
 	 */
-	private double calcDistance(DataPoint d1, DataPoint d2) {
-		if (distanceFunction == Distance.MANHATTAN)
-			return Distance.ManhattanDist(d1, d2);
-		if(distanceFunction == Distance.COSINE)
-			return Distance.CosineDist(d1, d2);
-		
-		return Distance.EuclideanDist(d1, d2);	
-	}
+//	private double calcDistance(DataPoint d1, DataPoint d2) {
+//		if (distanceFunction == Distance.Func.MANHATTAN)
+//			return Distance.ManhattanDist(d1, d2);
+//		if(distanceFunction == Distance.Func.COSINE)
+//			return Distance.CosineDist(d1, d2);
+//		
+//		return Distance.EuclideanDist(d1, d2);	
+//	}
 	
 	/**
 	 * Returns all the data points contained in the CSV file
@@ -194,9 +197,11 @@ public class KMeans {
 		
 		// main loop of the clustering algorithm
 		do {
-			System.out.println("Iteration " + iteration + ":");
+			/** debugging message **/
+//			System.out.println("Iteration " + iteration + ":");
+			/** end of debugging message **/
 			
-			// emptying centroids
+			// emptying centroid members
 			for(Centroid c : getCentroids()) {
 				c.deleteAllMembers();				
 			}
@@ -213,10 +218,10 @@ public class KMeans {
 			for (DataPoint obs : getAllDataPoints()) {	
 				
 				for(Centroid cent : getCentroids() ) {
-					allDistance.add(calcDistance(obs, cent));
+					allDistance.add(distanceFunction.getDistance(obs, cent)/*calcDistance(obs, cent)*/);
 				}
 				
-				// taking the index of the closest centroid 
+				// taking the index of the closest centroid				
 				int centroidIndexDataPointAssignedTo = allDistance.indexOf(Collections.min(allDistance));
 
 				// assigning the data point to the centroid
@@ -240,17 +245,21 @@ public class KMeans {
 			//     one of the terminating criteria
 			for(Centroid c : getCentroids()) {
 				c.calculateNewPosition();
-				centroidsMovement += calcDistance(initCentroids[idx], c);
+				centroidsMovement += distanceFunction.getDistance(initCentroids[idx], c);//calcDistance(initCentroids[idx], c);
+				/** Debugging message **/
+//				System.out.println("Distance " + idx + "=" + calcDistance(initCentroids[idx], c));
+//				System.out.println(initCentroids[idx].getFeatures());
+//				System.out.println(c.getFeatures());
+				/** end of debugging message**/
 				idx++;
 			}
 			
-			System.out.println();
+//			System.out.println();
 		
 		// the terminating criteria either: 
 		// (1) the centroids no longer move OR
 		// (2) the maxIteration parameter has been exceeded
 		} while(centroidsMovement > 0.0 && ++this.iteration < this.maxIteration);
-	}
-	
+	}	
 	
 }

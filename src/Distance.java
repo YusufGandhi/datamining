@@ -1,8 +1,42 @@
+import java.math.BigDecimal;
+
 
 public class Distance {
-	public static final int EUCLIDEAN = 0;
-	public static final int MANHATTAN = 1;
-	public static final int COSINE = 2;
+	public enum Func {
+		EUCLIDEAN {
+			public double getDistance(DataPoint obs1, DataPoint obs2) {
+				if(!IsCompatible(obs1,obs2)) throw new UnsupportedOperationException("Observations don't match");
+				double distance = 0.0;
+				for (Integer i : obs1.getNumIndex()) {
+					distance += ((Double) obs1.getFeatures().get(i) - (Double) obs2.getFeatures().get(i)) *
+							((Double) obs1.getFeatures().get(i) - (Double) obs2.getFeatures().get(i));
+				}
+				return new BigDecimal(Math.sqrt(distance)).setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
+			}
+		}, MANHATTAN {
+			public double getDistance(DataPoint obs1, DataPoint obs2) {
+				if(!IsCompatible(obs1,obs2)) throw new UnsupportedOperationException("Observations don't match");
+				double distance = 0.0;
+				
+				// only iterating through the numeric index
+				for (Integer i : obs1.getNumIndex()) {
+					distance += Math.abs((Double) obs1.getFeatures().get(i) - (Double) obs2.getFeatures().get(i));
+				}
+				return distance;
+			}
+		}, COSINE {
+			public double getDistance(DataPoint obs1, DataPoint obs2) {
+				if(!IsCompatible(obs1,obs2)) throw new UnsupportedOperationException("Observations don't match");
+				BigDecimal result = new BigDecimal(1.0 - (dotProduct(obs1, obs2) / (obs1.getMagnitude() * obs2.getMagnitude())));
+				return result.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
+			}
+		};
+		
+		abstract double getDistance(DataPoint obs1, DataPoint obs2);
+	}
+//	public static final int EUCLIDEAN = 0;
+//	public static final int MANHATTAN = 1;
+//	public static final int COSINE = 2;
 	
 	/**
 	 * The function to calculate Manhattan distance between two DataPoint objects.
@@ -34,7 +68,7 @@ public class Distance {
 			distance += ((Double) obs1.getFeatures().get(i) - (Double) obs2.getFeatures().get(i)) *
 					((Double) obs1.getFeatures().get(i) - (Double) obs2.getFeatures().get(i));
 		}
-		return Math.sqrt(distance);
+		return new BigDecimal(Math.sqrt(distance)).setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
 	}
 	
 	/**
@@ -46,8 +80,8 @@ public class Distance {
 	 */
 	public final static double CosineDist(DataPoint obs1, DataPoint obs2) {
 		if(!IsCompatible(obs1,obs2)) throw new UnsupportedOperationException("Observations don't match");
-		
-		return dotProduct(obs1, obs2) / (obs1.getMagnitude() * obs2.getMagnitude());
+		BigDecimal result = new BigDecimal(1.0 - (dotProduct(obs1, obs2) / (obs1.getMagnitude() * obs2.getMagnitude())));
+		return result.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
 	}
 	
 	/**

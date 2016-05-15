@@ -6,11 +6,9 @@
 import java.util.ArrayList;
 
 public class Centroid extends DataPoint {
-	// the constant to define furthest-first centroid initialization 
-	public static final int FURTHEST_FIRST_CENTROID_INIT = 1;
-	
-	// the constant to define random centroid initialization
-	public static final int RANDOM_CENTROID_INIT = 0;
+	public enum Init {
+		FURTHEST_FIRST, RANDOM;
+	}
 	
 	// the collection to which data points are assigned
 	private ArrayList<DataPoint> members;
@@ -24,7 +22,6 @@ public class Centroid extends DataPoint {
 		super(copy);
 		members = new ArrayList<DataPoint>();
 	}
-	
 	/**
 	 * Method to add a data point to the members collection.
 	 * @param m the DataPoint object that is going to be added into the collection.
