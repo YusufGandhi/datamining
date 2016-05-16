@@ -179,7 +179,7 @@ public class KMeans {
 				idx++;
 			}
 			
-		// the terminating criteria either: 
+		// the terminating criterion is either: 
 		// (1) the centroids no longer move OR
 		// (2) the maxIteration parameter has been exceeded
 		} while(centroidsMovement > 0.0 && ++this.iteration < this.maxIteration);
