@@ -1,3 +1,4 @@
+/** File: CSV.java **/
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -6,7 +7,6 @@ import java.util.ArrayList;
 public class CSV {
 	
 	private ArrayList<DataPoint> rows;
-	
 	
 	public CSV(String fileName) {
 		rows = new ArrayList<DataPoint>();

@@ -51,16 +51,8 @@ public class KMeans {
 		// either fur
 		this.centroidInitFunction = (centroidInitFunction == Centroid.Init.FURTHEST_FIRST ?
 				Centroid.Init.FURTHEST_FIRST : Centroid.Init.RANDOM);
-		centroids = new ArrayList<Centroid>();
 		
-		// initalizing centroids initialization function
-		// either furthest-first or random 
-		if (this.centroidInitFunction == Centroid.Init.FURTHEST_FIRST)
-			furthestFirstCentroidsInit();
-		else
-			randomCentroidsInit();
-		
-		this.iteration = 0;
+		reset();
 			
 	}
 	
@@ -190,6 +182,7 @@ public class KMeans {
 	public void runClustering() {
 		// initializing the temporary centroids and
 		// other variables for comparing purposes.
+		reset();
 		Centroid [] initCentroids = new Centroid[this.K];
 		double centroidsMovement = 0.0;
 		int idx;
@@ -260,6 +253,18 @@ public class KMeans {
 		// (1) the centroids no longer move OR
 		// (2) the maxIteration parameter has been exceeded
 		} while(centroidsMovement > 0.0 && ++this.iteration < this.maxIteration);
-	}	
+	}
+
+	public void reset() {
+		iteration = 0;
+		centroids = new ArrayList<Centroid>();
+		
+		// initalizing centroids initialization function
+		// either furthest-first or random 
+		if (this.centroidInitFunction == Centroid.Init.FURTHEST_FIRST)
+			furthestFirstCentroidsInit();
+		else
+			randomCentroidsInit();
+	}
 	
 }

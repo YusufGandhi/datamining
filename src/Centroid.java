@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class Centroid extends DataPoint {
 	public enum Init {
-		FURTHEST_FIRST, RANDOM;
+		RANDOM, FURTHEST_FIRST;
 	}
 	
 	// the collection to which data points are assigned
