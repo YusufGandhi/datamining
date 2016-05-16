@@ -64,6 +64,5 @@ public class Distance {
 				return false;
 		}
 		return true;
-	}
-	
-}
+	}	
+} /** end of Distance.java **/

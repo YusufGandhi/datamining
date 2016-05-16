@@ -1,8 +1,4 @@
-/**
- * (c) 2016 - MIT License
- * The Centroid class is extended from the DataPoint class.
- * This is where the centroids are defined.
- */
+/** File: Centroid.java **/
 import java.util.ArrayList;
 
 public class Centroid extends DataPoint {
@@ -82,6 +78,4 @@ public class Centroid extends DataPoint {
 	public String toString() {
 		return getFeatures().toString();
 	}
-	
-	
-}
+} /** end of Centroid.java **/
