@@ -71,9 +71,11 @@ public class KMeans {
 			for(DataPoint d : csv.getRows()) {
 				double sum = 0.0;
 				for(Centroid c : centroids) {
-					sum += distanceFunction.getDistance(c, d);//calcDistance(c, d);
+					sum += distanceFunction.getDistance(c, d);
 				}
 				
+				// if the current centroid is further
+				// than the current, do swap
 				if (sum > max) {
 					maxDistCentroid = new Centroid(d);
 					max = sum;
