@@ -1,4 +1,5 @@
 /** File: MainProgram.java **/
+import java.util.ArrayList;
 
 public class MainProgram {
 	public static void main(String[] args) {
@@ -10,6 +11,6 @@ public class MainProgram {
 								100 /* max iteration */, 
 								Centroid.Init.RANDOM/* centroid initialization function */);
 		
-		km.runClustering();
+		ArrayList<Centroid> centroids = km.runClustering();
 	}
 } /** End of MainProgram.java **/

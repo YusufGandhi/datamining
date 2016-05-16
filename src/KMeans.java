@@ -43,19 +43,22 @@ public class KMeans {
 	}
 	
 	// the random centroid initialization method
-	public void randomCentroidsInit() {		
+	public ArrayList<Centroid> randomCentroidsInit() {
+		ArrayList<Centroid> c = new ArrayList<Centroid>();
 		for(int i = 0; i < K; i++) {
 			Centroid chosen = getRandomCentroidFromDataPoints();
 			
-			if(!centroids.contains(chosen)) centroids.add(i, chosen);
+			if(!c.contains(chosen)) c.add(i, chosen);
 			else i--;
 		}
+		return c;
 	}
 	
 	// The furthest-first centroid initialization method 
-	public void furthestFirstCentroidsInit() {
+	public ArrayList<Centroid> furthestFirstCentroidsInit() {
+		ArrayList<Centroid> newCent = new ArrayList<Centroid>();
 		// STEP 1: adding the first, random centroid
-		centroids.add(getRandomCentroidFromDataPoints());
+		newCent.add(getRandomCentroidFromDataPoints());
 		
 		// STEP 2: repeat k - 1 times: find the data point that
 		//         is the farthest away from the selected centroids so far
@@ -70,7 +73,7 @@ public class KMeans {
 			// (not just farthest from one centroid)
 			for(DataPoint d : csv.getRows()) {
 				double sum = 0.0;
-				for(Centroid c : centroids) {
+				for(Centroid c : newCent) {
 					sum += distanceFunction.getDistance(c, d);
 				}
 				
@@ -84,8 +87,9 @@ public class KMeans {
 			
 			// adding the furthest centroid
 			// to the current list of centroids
-			centroids.add(maxDistCentroid);
+			newCent.add(maxDistCentroid);
 		}
+		return newCent;
 	}
 	
 	public ArrayList<DataPoint> getAllDataPoints() {
@@ -112,15 +116,14 @@ public class KMeans {
 	
 	public void reset() {
 		iteration = 0;
-		centroids = new ArrayList<Centroid>();
 		if (this.centroidInitFunction == Centroid.Init.FURTHEST_FIRST)
-			furthestFirstCentroidsInit();
+			centroids  = furthestFirstCentroidsInit();
 		else
-			randomCentroidsInit();
+			centroids = randomCentroidsInit();
 	}
 	
 	//The main algorithm of the K-Means clustering.
-	public void runClustering() {
+	public ArrayList<Centroid> runClustering() {
 		// initializing the temporary centroids and
 		// other variables for comparing purposes.
 		reset();
@@ -183,5 +186,6 @@ public class KMeans {
 		// (1) the centroids no longer move OR
 		// (2) the maxIteration parameter has been exceeded
 		} while(centroidsMovement > 0.0 && ++this.iteration < this.maxIteration);
+		return centroids;
 	}	
 } /** End of KMeans.java **/
