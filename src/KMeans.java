@@ -35,7 +35,7 @@ public class KMeans {
 		reset();
 	}
 	
-	// generating a random centroid from data point
+	// method to generate a random centroid from data points
 	private Centroid getRandomCentroidFromDataPoints() {
 		int size = csv.getRows().size();
 		int idx = (int) (Math.random() * size);
@@ -82,7 +82,7 @@ public class KMeans {
 				}
 			}
 			
-			// adding the furhtest centroid
+			// adding the furthest centroid
 			// to the current list of centroids
 			centroids.add(maxDistCentroid);
 		}
