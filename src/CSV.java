@@ -5,19 +5,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class CSV {
-	
+	// variable in which the data set is saved
 	private ArrayList<DataPoint> rows;
 	
 	public CSV(String fileName) {
 		rows = new ArrayList<DataPoint>();
 		extractCSV(fileName);
 	}
-	/**
-	 * The main algorithm to extract the data points in the CSV.
-	 * Each line of the CSV represents one data point. Thus, each row
-	 * is saved as one DataPoint object and added to the rows parameter.
-	 * @param fileName the CSV filename in which the data points are defined
-	 */
+	
+	// The main algorithm to extract the data points in the CSV.
 	private void extractCSV(String fileName)  {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
@@ -30,19 +26,11 @@ public class CSV {
 		}
 	}
 	
-	/**
-	 * Returns the collection of data points.
-	 * @return all the data points
-	 */
+	// method to retrieve all rows of the dataset
 	public ArrayList<DataPoint> getRows() {
 		return rows;
 	}
-	
-	/**
-	 * Returns the data point in the defined index
-	 * @param idx the index of which the data point is going to be retrieved
-	 * @return    the data point of the defined index
-	 */
+	// method to retrieve a certain row (idx)
 	public DataPoint getRow(int idx) {
 		return rows.get(idx);
 	}
