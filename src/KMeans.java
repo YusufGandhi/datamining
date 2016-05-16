@@ -113,7 +113,6 @@ public class KMeans {
 	public void reset() {
 		iteration = 0;
 		centroids = new ArrayList<Centroid>();
-		
 		if (this.centroidInitFunction == Centroid.Init.FURTHEST_FIRST)
 			furthestFirstCentroidsInit();
 		else
@@ -163,7 +162,6 @@ public class KMeans {
 				allDistance.clear();
 			}
 			
-			
 			// preparing for checking whether the centroids move from previous position 
 			// this is where the initCentroids variable becomes handy.
 			centroidsMovement = 0.0;
@@ -181,7 +179,6 @@ public class KMeans {
 				idx++;
 			}
 			
-		
 		// the terminating criteria either: 
 		// (1) the centroids no longer move OR
 		// (2) the maxIteration parameter has been exceeded
