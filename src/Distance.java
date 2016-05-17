@@ -48,12 +48,11 @@ public class Distance {
 				
 				// error handling: return 1.0 when it gets infinite result
 				if(Double.isInfinite(result) || Double.isNaN(result)) return 1.0;
-				
+
 				// return 1 - cosine \theta (the cosine distance)
 				return new BigDecimal(1.0 - result).setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
 			}
-		};
-		
+		};		
 		abstract double getDistance(DataPoint obs1, DataPoint obs2);
 	}
 	
