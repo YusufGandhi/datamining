@@ -1,63 +1,62 @@
+/** File: Distance.java **/
+import java.math.BigDecimal;
 
 public class Distance {
-	public static final int EUCLIDEAN = 0;
-	public static final int MANHATTAN = 1;
-	public static final int COSINE = 2;
-	
-	/**
-	 * The function to calculate Manhattan distance between two DataPoint objects.
-	 * @param obs1 the first DataPoint object
-	 * @param obs2 the second DataPoint object
-	 * @return     Manhattan distance between the first and second DataPoint
-	 */
-	public final static double ManhattanDist(DataPoint obs1, DataPoint obs2) {
-		if(!IsCompatible(obs1,obs2)) throw new UnsupportedOperationException("Observations don't match");
-		double distance = 0.0;
+	public enum Func {
+		// the Euclidean distance representation and distance calculation function
+		EUCLIDEAN {
+			
+			// method to calculate Euclidean distance
+			public double getDistance(DataPoint obs1, DataPoint obs2) {
+				
+				// checking the compatibility of two data points
+				if(!IsCompatible(obs1,obs2)) throw new UnsupportedOperationException("Observations don't match");
+				double distance = 0.0;
+				
+				// for each feature (a_i - b_i)^2
+				for (Integer i : obs1.getNumIndex()) {
+					distance += Math.pow((Double) obs1.getFeatures().get(i) - (Double) obs2.getFeatures().get(i), 2);
+				}
+				return new BigDecimal(Math.sqrt(distance)).setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
+			}	
+		},
 		
-		// only iterating through the numeric index
-		for (Integer i : obs1.getNumIndex()) {
-			distance += Math.abs((Double) obs1.getFeatures().get(i) - (Double) obs2.getFeatures().get(i));
-		}
-		return distance;
-	}
-	
-	/**
-	 * The function to calculate Euclidean distance of two DataPoint objects
-	 * @param obs1 the first DataPoint object
-	 * @param obs2 the second DataPoint object
-	 * @return     Euclidean distance of the first and second DataPoint
-	 */
-	public final static double EuclideanDist(DataPoint obs1, DataPoint obs2) {
-		if(!IsCompatible(obs1,obs2)) throw new UnsupportedOperationException("Observations don't match");
-		double distance = 0.0;
-		for (Integer i : obs1.getNumIndex()) {
-			distance += ((Double) obs1.getFeatures().get(i) - (Double) obs2.getFeatures().get(i)) *
-					((Double) obs1.getFeatures().get(i) - (Double) obs2.getFeatures().get(i));
-		}
-		return Math.sqrt(distance);
-	}
-	
-	/**
-	 * Cosine Similarity is derived from this reference: https://en.wikipedia.org/wiki/Cosine_similarity
-	 * The function returns the cosine similarity of two DataPoint objects
-	 * @param obs1 the first DataPoint object
-	 * @param obs2 the second DataPoint object
-	 * @return     Cosine similarity (distance) of the first and second DataPoint
-	 */
-	public final static double CosineDist(DataPoint obs1, DataPoint obs2) {
-		if(!IsCompatible(obs1,obs2)) throw new UnsupportedOperationException("Observations don't match");
+		// the Manhattan distance representation and the distance calculation function
+		MANHATTAN {
+			
+			// method to calculate Manhattan distance
+			public double getDistance(DataPoint obs1, DataPoint obs2) {
+				if(!IsCompatible(obs1,obs2)) throw new UnsupportedOperationException("Observations don't match");
+				double distance = 0.0;
+				
+				// for each feature distance abs(a_i - b_i)
+				for (Integer i : obs1.getNumIndex()) {
+					distance += Math.abs((Double) obs1.getFeatures().get(i) - (Double) obs2.getFeatures().get(i));
+				}
+				return distance;
+			}
+		},
 		
-		return dotProduct(obs1, obs2) / (obs1.getMagnitude() * obs2.getMagnitude());
+		// the Cosine distance representation and the distance calculation
+		COSINE {
+			public double getDistance(DataPoint obs1, DataPoint obs2) {
+				if(!IsCompatible(obs1,obs2)) throw new UnsupportedOperationException("Observations don't match");
+				
+				// cosine \theta = a . b / |a|.|b|
+				double result = dotProduct(obs1, obs2) / 
+						(obs1.getMagnitude() * obs2.getMagnitude());
+				
+				// error handling: return 1.0 when it gets infinite result
+				if(Double.isInfinite(result) || Double.isNaN(result)) return 1.0;
+
+				// return 1 - cosine \theta (the cosine distance)
+				return new BigDecimal(1.0 - result).setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
+			}
+		};		
+		abstract double getDistance(DataPoint obs1, DataPoint obs2);
 	}
 	
-	/**
-	 * Dot product of a two DataPoint is derived from this reference:
-	 * https://en.wikipedia.org/wiki/Euclidean_vector#Dot_product
-	 * The function returns the dot product of two DataPoint objects
-	 * @param obs1 the first DataPoint object
-	 * @param obs2 the second DataPoint object
-	 * @return     the dot product of the first and second DataPoint objects
-	 */
+	// function to calculate the dot product of two vectors
 	private final static double dotProduct(DataPoint obs1, DataPoint obs2) {
 		if(!IsCompatible(obs1,obs2)) throw new UnsupportedOperationException("Observations don't match");
 		
@@ -68,13 +67,7 @@ public class Distance {
 		return sum;
 	}
 	
-	/**
-	 * The function checks whether two DataPoiint objects are compatible
-	 * (read: have the dimension and the same type of features for each dimension)
-	 * @param o1 the first DataPoint object
-	 * @param o2 the second DataPoint object
-	 * @return   true if both DataPoints have the same features (length and type); false otherwise
-	 */
+	// function to check whether the two data points are compatible
 	private static boolean IsCompatible(DataPoint o1, DataPoint o2) {
 		if(o1.featureSize() != o2.featureSize()) return false;
 
@@ -84,6 +77,5 @@ public class Distance {
 				return false;
 		}
 		return true;
-	}
-	
-}
+	}	
+} /** end of Distance.java **/

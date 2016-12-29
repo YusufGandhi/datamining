@@ -1,16 +1,10 @@
-/**
- * (c) 2016 - MIT License
- * The Centroid class is extended from the DataPoint class.
- * This is where the centroids are defined.
- */
+/** File: Centroid.java **/
 import java.util.ArrayList;
 
 public class Centroid extends DataPoint {
-	// the constant to define furthest-first centroid initialization 
-	public static final int FURTHEST_FIRST_CENTROID_INIT = 1;
-	
-	// the constant to define random centroid initialization
-	public static final int RANDOM_CENTROID_INIT = 0;
+	public enum Init {
+		RANDOM, FURTHEST_FIRST;
+	}
 	
 	// the collection to which data points are assigned
 	private ArrayList<DataPoint> members;
@@ -24,7 +18,6 @@ public class Centroid extends DataPoint {
 		super(copy);
 		members = new ArrayList<DataPoint>();
 	}
-	
 	/**
 	 * Method to add a data point to the members collection.
 	 * @param m the DataPoint object that is going to be added into the collection.
@@ -85,6 +78,4 @@ public class Centroid extends DataPoint {
 	public String toString() {
 		return getFeatures().toString();
 	}
-	
-	
-}
+} /** end of Centroid.java **/
